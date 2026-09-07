@@ -13,7 +13,7 @@ from packages.shared.database import init_db
 from apps.coordinator.api import (
     auth_router, nodes_router, workloads_router,
     jobs_router, tasks_router, approvals_router,
-    audit_router, capacity_router, alerts_router
+    audit_router, capacity_router, alerts_router, pairing_router
 )
 from apps.coordinator.core.recovery_engine import recovery_engine
 from apps.coordinator.core.state_machine import InvalidStateTransitionError
@@ -107,6 +107,7 @@ app.include_router(approvals_router, prefix=settings.API_V1_PREFIX)
 app.include_router(audit_router, prefix=settings.API_V1_PREFIX)
 app.include_router(capacity_router, prefix=settings.API_V1_PREFIX)
 app.include_router(alerts_router, prefix=settings.API_V1_PREFIX)
+app.include_router(pairing_router, prefix=settings.API_V1_PREFIX)
 
 @app.get("/healthz")
 async def health_check():
