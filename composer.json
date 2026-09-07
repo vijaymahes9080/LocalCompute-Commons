@@ -1,0 +1,20 @@
+{
+    "name": "vijaymahes9080/localcompute-commons",
+    "description": "LocalCompute Commons library",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vijay Mahes",
+            "email": "Vijaypradhap2004@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vijaymahes9080\\LocalComputeCommons\\": "src/"
+        }
+    }
+}
