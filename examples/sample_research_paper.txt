@@ -1,0 +1,16 @@
+# Privacy-Aware Distributed AI Scheduling for Community Compute Clusters
+
+## Abstract
+Universities, colleges, and local research labs often possess abundant aggregate computing power distributed across desktop workstations, lab rigs, and personal laptops. However, harnessing this decentralized hardware safely requires strict privacy boundary enforcement, fault tolerance against volatile peer disconnections, deterministic queue scheduling, and transparent operational auditability.
+
+## 1. Introduction
+LocalCompute Commons introduces a zero-cloud-dependent coordination layer designed to aggregate idle local compute into an Ollama-compatible distributed cluster.
+
+## 2. Multi-Factor Deterministic Scheduling
+Rather than delegating routing to black-box heuristics or stochastic LLM agents, LocalCompute Commons implements a strictly deterministic scoring policy function evaluating hardware fitness, model cache locality, AC power stability, battery thresholds, and clock skew.
+
+## 3. Worker Lease Management & Failure Recovery
+In compute networks where peers may abruptly disconnect, the coordinator issues time-bounded leases with cryptographic SHA-256 result checksums. Expired leases trigger automatic non-duplicate re-queueing with exponential backoff up to configurable retry limits.
+
+## 4. Administrative Multi-Party Authorization
+High-impact operations including node revocation, trust policy alterations, and bulk cancellations are gated behind explicit approval workflows with persistent audit event logs.

@@ -1,0 +1,141 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: lc-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: localcompute
+      POSTGRES_USER: lc_user
+      POSTGRES_PASSWORD: lc_secure_password_2026
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lc_user -d localcompute"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: lc-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+  coordinator:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.coordinator
+    container_name: lc-coordinator
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      DATABASE_URL: "postgresql+asyncpg://lc_user:lc_secure_password_2026@postgres:5432/localcompute"
+      REDIS_URL: "redis://redis:6379/0"
+      USE_IN_MEMORY_QUEUE: "false"
+      SECRET_KEY: "prod-secret-change-me-locally-389472938472938472"
+      COORDINATOR_HOST: "0.0.0.0"
+      COORDINATOR_PORT: 8000
+    ports:
+      - "8000:8000"
+
+  worker-alpha:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.worker
+    container_name: lc-worker-alpha
+    restart: unless-stopped
+    depends_on:
+      - coordinator
+    environment:
+      NODE_NAME: "Lab-Alpha-RTX4090"
+      COORDINATOR_URL: "http://coordinator:8000"
+      TRUST_LEVEL: "trusted_lab"
+      CACHED_MODELS: "llama3:8b,mistral:7b"
+
+  worker-beta:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.worker
+    container_name: lc-worker-beta
+    restart: unless-stopped
+    depends_on:
+      - coordinator
+    environment:
+      NODE_NAME: "Lab-Beta-A100"
+      COORDINATOR_URL: "http://coordinator:8000"
+      TRUST_LEVEL: "trusted_lab"
+      CACHED_MODELS: "llama3:8b,phi3:mini"
+
+  worker-gamma:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.worker
+    container_name: lc-worker-gamma
+    restart: unless-stopped
+    depends_on:
+      - coordinator
+    environment:
+      NODE_NAME: "Community-Compute-01"
+      COORDINATOR_URL: "http://coordinator:8000"
+      TRUST_LEVEL: "community"
+      CACHED_MODELS: "mistral:7b,qwen2:7b"
+
+  web:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.web
+    container_name: lc-web
+    restart: unless-stopped
+    depends_on:
+      - coordinator
+    ports:
+      - "5173:80"
+
+  mcp-server:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.mcp
+    container_name: lc-mcp-server
+    restart: unless-stopped
+    depends_on:
+      - coordinator
+    environment:
+      COORDINATOR_HOST: "coordinator"
+      COORDINATOR_PORT: 8000
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: lc-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: lc-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=false
+      - EXECUTIONS_DATA_PRUNE=true
+    volumes:
+      - n8ndata:/home/node/.n8n
+
+volumes:
+  pgdata:
+  redisdata:
+  n8ndata:

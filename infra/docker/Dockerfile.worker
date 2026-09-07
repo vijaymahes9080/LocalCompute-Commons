@@ -1,0 +1,19 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY packages/ /app/packages/
+COPY services/ /app/services/
+COPY examples/run_local_worker.py /app/run_worker.py
+
+ENV PYTHONPATH=/app
+
+CMD ["python", "run_worker.py"]

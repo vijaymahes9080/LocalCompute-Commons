@@ -1,0 +1,113 @@
+{
+  "name": "LocalCompute Commons - Hourly Capacity & Outage Monitor",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "1",
+      "name": "Schedule Hourly Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://coordinator:8000/api/v1/capacity/snapshot",
+        "authentication": "none",
+        "options": {}
+      },
+      "id": "2",
+      "name": "Get Capacity Snapshot",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.online_nodes }}",
+              "operation": "lessThan",
+              "value2": 1
+            },
+            {
+              "value1": "={{ $json.avg_queue_wait_seconds }}",
+              "operation": "largerThan",
+              "value2": 60
+            }
+          ]
+        },
+        "combineOperation": "any"
+      },
+      "id": "3",
+      "name": "Check Outage / High Latency",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://coordinator:8000/api/v1/alerts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"title\": \"Cluster Outage or High Queue Latency Detected\",\n  \"severity\": \"critical\",\n  \"source\": \"n8n_hourly_monitor\",\n  \"details\": {\n    \"online_nodes\": {{ $node[\"Get Capacity Snapshot\"].json[\"online_nodes\"] }},\n    \"total_nodes\": {{ $node[\"Get Capacity Snapshot\"].json[\"total_nodes\"] }},\n    \"pending_tasks\": {{ $node[\"Get Capacity Snapshot\"].json[\"pending_tasks\"] }},\n    \"avg_queue_wait_seconds\": {{ $node[\"Get Capacity Snapshot\"].json[\"avg_queue_wait_seconds\"] }}\n  }\n}"
+      },
+      "id": "4",
+      "name": "Create System Alert in Coordinator",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [920, 240]
+    }
+  ],
+  "connections": {
+    "Schedule Hourly Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Capacity Snapshot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Capacity Snapshot": {
+      "main": [
+        [
+          {
+            "node": "Check Outage / High Latency",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Outage / High Latency": {
+      "main": [
+        [
+          {
+            "node": "Create System Alert in Coordinator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
