@@ -99,6 +99,21 @@ flowchart TB
 7. **n8n Automation Workflow**:
    - Hourly capacity snapshots and automated alert creation upon node outages or high queue latency.
 
+8. **Carbon & Renewable Energy Aware Scheduling**:
+   - Integrates real-time grid carbon intensity metrics (gCO2/kWh) and solar peak forecasts to award scheduling bonuses to green energy compute nodes.
+
+9. **6-Digit PIN & QR Mutual Pairing Handshake**:
+   - One-time cryptographic pairing tokens and QR payloads for instant onboarding of student laptops.
+
+10. **Federated Semantic Embedding Engine**:
+    - Generates local dense vector embeddings with differential privacy Laplace noise injection ($\epsilon=1.0$) for decentralized semantic search without raw document sharing.
+
+11. **Multi-Tenant Campus Dominant Resource Fairness (DRF)**:
+    - Fair-share quota allocator preventing compute slot starvation across college departments, student clubs, and labs.
+
+12. **Interactive Terminal CLI (`lc`) & Live Gantt Timeline**:
+    - Full-featured command-line interface (`python packages/cli/cli.py`) and live task progress Gantt chart in the React dashboard.
+
 ---
 
 ## 🚀 Quick Start
