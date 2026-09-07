@@ -1,5 +1,7 @@
 # LocalCompute Commons 🌐⚡
 
+![LocalCompute Commons Banner](assets/hero_banner_light.jpg)
+
 [![CI/CD](https://github.com/vijaymahes9080/LocalCompute-Commons/actions/workflows/ci.yml/badge.svg)](https://github.com/vijaymahes9080/LocalCompute-Commons/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
@@ -15,6 +17,18 @@
 Students, small research laboratories, non-profits, and rural institutions often have dozens of idle laptops, desktop workstations, and lab PCs, yet cannot afford costly cloud GPU rentals or are legally prohibited from uploading sensitive documents to proprietary cloud APIs.
 
 **LocalCompute Commons** turns fragmented campus and community computers into an auditable, encrypted, private compute mesh. It schedules privacy-aware batch AI workloads (such as Ollama text summarization), executes them across local nodes, recovers automatically from worker disconnections, exposes verified Model Context Protocol (MCP) tools, and provides deterministic, explainable scheduling decisions.
+
+---
+
+## 🖥️ Dashboard & Real-Time Control Plane
+
+![LocalCompute Commons Dashboard Preview](assets/dashboard_mockup_light.jpg)
+
+---
+
+## 🌐 Decentralized Mesh Topology & Privacy Perimeter
+
+![LocalCompute Commons Mesh Topology](assets/mesh_network_light.jpg)
 
 ---
 
