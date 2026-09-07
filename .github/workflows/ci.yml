@@ -1,0 +1,62 @@
+name: LocalCompute Commons CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-tests:
+    name: Backend Tests & Evaluation Suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Pytest Suite
+        run: |
+          pytest tests/ -v --cov=packages --cov=apps/coordinator --cov=services
+
+      - name: Run 40-Scenario Evaluation Suite
+        run: |
+          python tests/evaluation/run_evaluations.py
+
+  frontend-build:
+    name: Frontend Build & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: apps/web/package.json
+
+      - name: Install and Build Web UI
+        working-directory: apps/web
+        run: |
+          npm install
+          npm run build
+
+  docker-lint:
+    name: Docker Compose Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Docker Compose Configuration
+        run: |
+          docker compose -f infra/docker/docker-compose.yml config
