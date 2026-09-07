@@ -1,5 +1,41 @@
-/vendor/
-composer.lock
+# Environments & Secrets
+.env
+.env.local
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node & Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Databases & Runtime storage
+*.db
+*.sqlite
+*.sqlite3
+localcompute.db
+test_localcompute_suite.db
+pgdata/
+redisdata/
+n8ndata/
+
+# OS & Logs
 .DS_Store
 Thumbs.db
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
