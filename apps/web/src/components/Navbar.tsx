@@ -1,5 +1,4 @@
-import React from 'react';
-import { Shield, Server, Cpu, FileText, CheckCircle2, History, LogIn, LogOut, Terminal, Radio } from 'lucide-react';
+import { Shield, Server, Cpu, FileText, CheckCircle2, History, LogIn, LogOut, Terminal, Radio, Github } from 'lucide-react';
 import { User } from '../types';
 
 interface NavbarProps {
@@ -78,9 +77,20 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
           </nav>
 
-          {/* User Auth Info */}
-          <div className="flex items-center gap-3">
-            {user ? (
+            {/* User Auth Info & GitHub */}
+            <div className="flex items-center gap-3">
+              <a
+                href="https://github.com/vijaymahes9080/LocalCompute-Commons"
+                target="_blank"
+                rel="noreferrer"
+                title="View GitHub Repository"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700/60 transition text-sm font-medium"
+              >
+                <Github className="w-4 h-4 text-sky-400" />
+                <span className="hidden lg:inline">GitHub</span>
+              </a>
+
+              {user ? (
               <div className="flex items-center gap-3">
                 <div className="hidden sm:flex flex-col text-right">
                   <span className="text-sm font-semibold text-slate-200">{user.username}</span>

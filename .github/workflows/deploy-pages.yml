@@ -1,0 +1,58 @@
+name: Deploy Web UI to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: apps/web/package.json
+
+      - name: Install dependencies
+        working-directory: apps/web
+        run: npm install
+
+      - name: Build Web Application
+        working-directory: apps/web
+        run: npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'apps/web/dist'
+
+      - name: Deploy to GitHub Pages (GitHub Actions Source)
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Deploy to gh-pages branch (Deploy from Branch Source)
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: apps/web/dist
+          branch: gh-pages
